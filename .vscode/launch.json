@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-TelecomApiApplication<telecom-api>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "telecom_api.TelecomApiApplication",
+            "projectName": "telecom-api",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
