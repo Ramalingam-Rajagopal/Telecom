@@ -2,11 +2,17 @@ package telecom_api.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import telecom_api.dto.ComplaintRequestDTO;
+import telecom_api.dto.ComplaintResponseDTO;
 import telecom_api.entity.Complaint;
+import telecom_api.entity.User;
+import telecom_api.mapper.ComplaintMapper;
+import telecom_api.repository.UserRepository;
 import telecom_api.service.ComplaintService;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/complaints")
@@ -14,20 +20,42 @@ import java.util.Optional;
 public class ComplaintController {
 
     private final ComplaintService complaintService;
+    private final UserRepository userRepository;
 
     @PostMapping
-    public Complaint createComplaint(@RequestBody Complaint complaint) {
-        return complaintService.saveComplaint(complaint);
+    public ComplaintResponseDTO createComplaint(@RequestBody ComplaintRequestDTO dto) {
+
+        User user = userRepository.findById(dto.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Complaint complaint = Complaint.builder()
+                .title(dto.getTitle())
+                .description(dto.getDescription())
+                .status(dto.getStatus())
+                .severity(dto.getSeverity())
+                .createdAt(LocalDateTime.now())
+                .user(user)
+                .build();
+
+        Complaint savedComplaint = complaintService.saveComplaint(complaint);
+
+        return ComplaintMapper.toResponseDTO(savedComplaint);
     }
 
     @GetMapping
-    public List<Complaint> getAllComplaints() {
-        return complaintService.getAllComplaints();
+    public List<ComplaintResponseDTO> getAllComplaints() {
+        return complaintService.getAllComplaints()
+                .stream()
+                .map(ComplaintMapper::toResponseDTO)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
-    public Optional<Complaint> getComplaintById(@PathVariable Long id) {
-        return complaintService.getComplaintById(id);
+    public ComplaintResponseDTO getComplaintById(@PathVariable Long id) {
+        Complaint complaint = complaintService.getComplaintById(id)
+                .orElseThrow(() -> new RuntimeException("Complaint not found"));
+
+        return ComplaintMapper.toResponseDTO(complaint);
     }
 
     @DeleteMapping("/{id}")
