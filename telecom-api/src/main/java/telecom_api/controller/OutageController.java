@@ -7,7 +7,7 @@ import telecom_api.dto.OutageResponseDTO;
 import telecom_api.entity.Outage;
 import telecom_api.mapper.OutageMapper;
 import telecom_api.service.OutageService;
-
+import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,7 +20,7 @@ public class OutageController {
     private final OutageService outageService;
 
     @PostMapping
-    public OutageResponseDTO createOutage(@RequestBody OutageRequestDTO dto) {
+    public OutageResponseDTO createOutage(@Valid @RequestBody OutageRequestDTO dto) {
 
         Outage outage = Outage.builder()
                 .area(dto.getArea())

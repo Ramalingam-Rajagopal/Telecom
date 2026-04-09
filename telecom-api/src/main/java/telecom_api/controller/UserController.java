@@ -7,7 +7,7 @@ import telecom_api.dto.UserResponseDTO;
 import telecom_api.entity.User;
 import telecom_api.mapper.UserMapper;
 import telecom_api.service.UserService;
-
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,7 +19,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public UserResponseDTO createUser(@RequestBody UserRequestDTO dto) {
+    public UserResponseDTO createUser(@Valid @RequestBody UserRequestDTO dto) {
         User user = UserMapper.toEntity(dto);
         User savedUser = userService.saveUser(user);
         return UserMapper.toResponseDTO(savedUser);
