@@ -9,7 +9,7 @@ import telecom_api.entity.User;
 import telecom_api.mapper.ComplaintMapper;
 import telecom_api.repository.UserRepository;
 import telecom_api.service.ComplaintService;
-
+import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,7 +23,7 @@ public class ComplaintController {
     private final UserRepository userRepository;
 
     @PostMapping
-    public ComplaintResponseDTO createComplaint(@RequestBody ComplaintRequestDTO dto) {
+    public ComplaintResponseDTO createComplaint(@Valid @RequestBody ComplaintRequestDTO dto) {
 
         User user = userRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
