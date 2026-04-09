@@ -2,11 +2,14 @@ package telecom_api.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import telecom_api.dto.UserRequestDTO;
+import telecom_api.dto.UserResponseDTO;
 import telecom_api.entity.User;
+import telecom_api.mapper.UserMapper;
 import telecom_api.service.UserService;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/users")
@@ -16,18 +19,26 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public User createUser(@RequestBody User user) {
-        return userService.saveUser(user);
+    public UserResponseDTO createUser(@RequestBody UserRequestDTO dto) {
+        User user = UserMapper.toEntity(dto);
+        User savedUser = userService.saveUser(user);
+        return UserMapper.toResponseDTO(savedUser);
     }
 
     @GetMapping
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
+    public List<UserResponseDTO> getAllUsers() {
+        return userService.getAllUsers()
+                .stream()
+                .map(UserMapper::toResponseDTO)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
-    public Optional<User> getUserById(@PathVariable Long id) {
-        return userService.getUserById(id);
+    public UserResponseDTO getUserById(@PathVariable Long id) {
+        User user = userService.getUserById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return UserMapper.toResponseDTO(user);
     }
 
     @DeleteMapping("/{id}")
