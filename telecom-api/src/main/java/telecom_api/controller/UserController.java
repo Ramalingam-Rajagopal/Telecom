@@ -10,6 +10,7 @@ import telecom_api.service.UserService;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
+import telecom_api.exception.ResourceNotFoundException;
 
 @RestController
 @RequestMapping("/users")
@@ -36,7 +37,7 @@ public class UserController {
     @GetMapping("/{id}")
     public UserResponseDTO getUserById(@PathVariable Long id) {
         User user = userService.getUserById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         return UserMapper.toResponseDTO(user);
     }

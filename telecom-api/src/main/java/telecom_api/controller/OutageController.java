@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import telecom_api.exception.ResourceNotFoundException;
 
 @RestController
 @RequestMapping("/outages")
@@ -46,7 +47,7 @@ public class OutageController {
     @GetMapping("/{id}")
     public OutageResponseDTO getOutageById(@PathVariable Long id) {
         Outage outage = outageService.getOutageById(id)
-                .orElseThrow(() -> new RuntimeException("Outage not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Outage not found"));
 
         return OutageMapper.toResponseDTO(outage);
     }

@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import telecom_api.exception.ResourceNotFoundException;
 
 @RestController
 @RequestMapping("/complaints")
@@ -26,7 +27,7 @@ public class ComplaintController {
     public ComplaintResponseDTO createComplaint(@Valid @RequestBody ComplaintRequestDTO dto) {
 
         User user = userRepository.findById(dto.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         Complaint complaint = Complaint.builder()
                 .title(dto.getTitle())
@@ -53,7 +54,7 @@ public class ComplaintController {
     @GetMapping("/{id}")
     public ComplaintResponseDTO getComplaintById(@PathVariable Long id) {
         Complaint complaint = complaintService.getComplaintById(id)
-                .orElseThrow(() -> new RuntimeException("Complaint not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Complaint not found"));
 
         return ComplaintMapper.toResponseDTO(complaint);
     }
