@@ -59,6 +59,11 @@ public class ComplaintController {
         return ComplaintMapper.toResponseDTO(complaint);
     }
 
+    @PutMapping("/{id}")
+    public ComplaintResponseDTO updateComplaint(@PathVariable Long id, @Valid @RequestBody ComplaintRequestDTO dto) {
+        return complaintService.updateComplaint(id, dto);
+    }
+
     @DeleteMapping("/{id}")
     public String deleteComplaint(@PathVariable Long id) {
         complaintService.deleteComplaint(id);

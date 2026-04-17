@@ -42,6 +42,11 @@ public class UserController {
         return UserMapper.toResponseDTO(user);
     }
 
+    @PutMapping("/{id}")
+public UserResponseDTO updateUser(@PathVariable Long id, @Valid @RequestBody UserRequestDTO dto) {
+    return userService.updateUser(id, dto);
+}
+
     @DeleteMapping("/{id}")
     public String deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);

@@ -2,9 +2,13 @@ package telecom_api.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import telecom_api.entity.Outage;
-import telecom_api.repository.OutageRepository;
 
+import telecom_api.dto.OutageRequestDTO;
+import telecom_api.dto.OutageResponseDTO;
+import telecom_api.entity.Outage;
+import telecom_api.exception.ResourceNotFoundException;
+import telecom_api.repository.OutageRepository;
+import telecom_api.mapper.OutageMapper;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,5 +32,18 @@ public class OutageService {
 
     public void deleteOutage(Long id) {
         outageRepository.deleteById(id);
+    }
+
+    public OutageResponseDTO updateOutage(Long id, OutageRequestDTO dto) {
+        Outage existingOutage = outageRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Outage not found with id: " + id));
+
+        existingOutage.setArea(dto.getArea());
+        existingOutage.setDescription(dto.getDescription());
+        existingOutage.setSeverity(dto.getSeverity());
+        existingOutage.setStatus(dto.getStatus());
+
+        Outage updatedOutage = outageRepository.save(existingOutage);
+
+        return OutageMapper.toResponseDTO(updatedOutage);
     }
 }
