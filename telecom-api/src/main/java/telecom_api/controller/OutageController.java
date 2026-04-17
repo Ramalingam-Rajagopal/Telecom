@@ -52,6 +52,11 @@ public class OutageController {
         return OutageMapper.toResponseDTO(outage);
     }
 
+    @PutMapping("/{id}")
+    public OutageResponseDTO updateOutage(@PathVariable Long id, @Valid @RequestBody OutageRequestDTO dto) {
+        return outageService.updateOutage(id, dto);
+    }
+
     @DeleteMapping("/{id}")
     public String deleteOutage(@PathVariable Long id) {
         outageService.deleteOutage(id);
