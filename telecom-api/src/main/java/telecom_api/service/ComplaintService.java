@@ -31,7 +31,10 @@ public class ComplaintService {
     }
 
     public void deleteComplaint(Long id) {
-        complaintRepository.deleteById(id);
+        Complaint complaint = complaintRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Complaint not found with id: " + id));
+
+        complaintRepository.delete(complaint);
     }
 
     public ComplaintResponseDTO updateComplaint(Long id, ComplaintRequestDTO dto) {
