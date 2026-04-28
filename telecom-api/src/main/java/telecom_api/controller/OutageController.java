@@ -12,6 +12,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import telecom_api.exception.ResourceNotFoundException;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 
 @RestController
 @RequestMapping("/outages")
@@ -21,45 +23,37 @@ public class OutageController {
     private final OutageService outageService;
 
     @PostMapping
-    public OutageResponseDTO createOutage(@Valid @RequestBody OutageRequestDTO dto) {
+    public ResponseEntity<OutageResponseDTO> createOutage(@Valid @RequestBody OutageRequestDTO dto) {
 
-        Outage outage = Outage.builder()
-                .area(dto.getArea())
-                .description(dto.getDescription())
-                .severity(dto.getSeverity())
-                .status(dto.getStatus())
-                .reportedAt(LocalDateTime.now())
-                .build();
+        Outage outage = Outage.builder().area(dto.getArea()).description(dto.getDescription()).severity(dto.getSeverity()).status(dto.getStatus()).reportedAt(LocalDateTime.now()).build();
 
         Outage savedOutage = outageService.saveOutage(outage);
 
-        return OutageMapper.toResponseDTO(savedOutage);
+        return ResponseEntity.status(HttpStatus.CREATED).body(OutageMapper.toResponseDTO(savedOutage));
     }
 
     @GetMapping
-    public List<OutageResponseDTO> getAllOutages() {
-        return outageService.getAllOutages()
-                .stream()
-                .map(OutageMapper::toResponseDTO)
-                .collect(Collectors.toList());
+    public ResponseEntity<List<OutageResponseDTO>> getAllOutages() {
+        List<OutageResponseDTO> outages = outageService.getAllOutages().stream().map(OutageMapper::toResponseDTO).collect(Collectors.toList());
+
+        return ResponseEntity.ok(outages);
     }
 
     @GetMapping("/{id}")
-    public OutageResponseDTO getOutageById(@PathVariable Long id) {
-        Outage outage = outageService.getOutageById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Outage not found"));
+    public ResponseEntity<OutageResponseDTO> getOutageById(@PathVariable Long id) {
+        Outage outage = outageService.getOutageById(id).orElseThrow(() -> new ResourceNotFoundException("Outage not found"));
 
-        return OutageMapper.toResponseDTO(outage);
+        return ResponseEntity.ok(OutageMapper.toResponseDTO(outage));
     }
 
     @PutMapping("/{id}")
-    public OutageResponseDTO updateOutage(@PathVariable Long id, @Valid @RequestBody OutageRequestDTO dto) {
-        return outageService.updateOutage(id, dto);
+    public ResponseEntity<OutageResponseDTO> updateOutage(@PathVariable Long id, @Valid @RequestBody OutageRequestDTO dto) {
+        return ResponseEntity.ok(outageService.updateOutage(id, dto));
     }
 
     @DeleteMapping("/{id}")
-    public String deleteOutage(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteOutage(@PathVariable Long id) {
         outageService.deleteOutage(id);
-        return "Outage deleted successfully";
+        return ResponseEntity.noContent().build();
     }
 }
