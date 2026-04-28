@@ -14,6 +14,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import telecom_api.exception.ResourceNotFoundException;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 
 @RestController
 @RequestMapping("/complaints")
@@ -24,49 +26,39 @@ public class ComplaintController {
     private final UserRepository userRepository;
 
     @PostMapping
-    public ComplaintResponseDTO createComplaint(@Valid @RequestBody ComplaintRequestDTO dto) {
+    public ResponseEntity<ComplaintResponseDTO> createComplaint(@Valid @RequestBody ComplaintRequestDTO dto) {
 
-        User user = userRepository.findById(dto.getUserId())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        User user = userRepository.findById(dto.getUserId()).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        Complaint complaint = Complaint.builder()
-                .title(dto.getTitle())
-                .description(dto.getDescription())
-                .status(dto.getStatus())
-                .severity(dto.getSeverity())
-                .createdAt(LocalDateTime.now())
-                .user(user)
-                .build();
+        Complaint complaint = Complaint.builder().title(dto.getTitle()).description(dto.getDescription()).status(dto.getStatus()).severity(dto.getSeverity()).createdAt(LocalDateTime.now()).user(user).build();
 
         Complaint savedComplaint = complaintService.saveComplaint(complaint);
 
-        return ComplaintMapper.toResponseDTO(savedComplaint);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ComplaintMapper.toResponseDTO(savedComplaint));
     }
 
     @GetMapping
-    public List<ComplaintResponseDTO> getAllComplaints() {
-        return complaintService.getAllComplaints()
-                .stream()
-                .map(ComplaintMapper::toResponseDTO)
-                .collect(Collectors.toList());
+    public ResponseEntity<List<ComplaintResponseDTO>> getAllComplaints() {
+        List<ComplaintResponseDTO> complaints = complaintService.getAllComplaints().stream().map(ComplaintMapper::toResponseDTO).collect(Collectors.toList());
+
+        return ResponseEntity.ok(complaints);
     }
 
     @GetMapping("/{id}")
-    public ComplaintResponseDTO getComplaintById(@PathVariable Long id) {
-        Complaint complaint = complaintService.getComplaintById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Complaint not found"));
+    public ResponseEntity<ComplaintResponseDTO> getComplaintById(@PathVariable Long id) {
+        Complaint complaint = complaintService.getComplaintById(id).orElseThrow(() -> new ResourceNotFoundException("Complaint not found"));
 
-        return ComplaintMapper.toResponseDTO(complaint);
+        return ResponseEntity.ok(ComplaintMapper.toResponseDTO(complaint));
     }
 
     @PutMapping("/{id}")
-    public ComplaintResponseDTO updateComplaint(@PathVariable Long id, @Valid @RequestBody ComplaintRequestDTO dto) {
-        return complaintService.updateComplaint(id, dto);
+    public ResponseEntity<ComplaintResponseDTO> updateComplaint(@PathVariable Long id, @Valid @RequestBody ComplaintRequestDTO dto) {
+        return ResponseEntity.ok(complaintService.updateComplaint(id, dto));
     }
 
     @DeleteMapping("/{id}")
-    public String deleteComplaint(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteComplaint(@PathVariable Long id) {
         complaintService.deleteComplaint(id);
-        return "Complaint deleted successfully";
+        return ResponseEntity.noContent().build();
     }
 }
