@@ -31,7 +31,10 @@ public class OutageService {
     }
 
     public void deleteOutage(Long id) {
-        outageRepository.deleteById(id);
+        Outage outage = outageRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Outage not found with id: " + id));
+
+        outageRepository.delete(outage);
     }
 
     public OutageResponseDTO updateOutage(Long id, OutageRequestDTO dto) {
