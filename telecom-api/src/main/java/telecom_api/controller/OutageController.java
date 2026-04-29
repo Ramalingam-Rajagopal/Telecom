@@ -20,6 +20,7 @@ import org.springframework.http.HttpStatus;
 public class OutageController {
 
     private final OutageService outageService;
+    private final OutageMapper outageMapper;
 
     @PostMapping
     public ResponseEntity<OutageResponseDTO> createOutage(@Valid @RequestBody OutageRequestDTO dto) {
@@ -28,12 +29,12 @@ public class OutageController {
 
         Outage savedOutage = outageService.saveOutage(outage);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(OutageMapper.toResponseDTO(savedOutage));
+        return ResponseEntity.status(HttpStatus.CREATED).body(outageMapper.toResponseDTO(savedOutage));
     }
 
     @GetMapping
     public ResponseEntity<List<OutageResponseDTO>> getAllOutages() {
-        List<OutageResponseDTO> outages = outageService.getAllOutages().stream().map(OutageMapper::toResponseDTO).collect(Collectors.toList());
+        List<OutageResponseDTO> outages = outageService.getAllOutages().stream().map(outageMapper::toResponseDTO).collect(Collectors.toList());
 
         return ResponseEntity.ok(outages);
     }
@@ -42,12 +43,19 @@ public class OutageController {
     public ResponseEntity<OutageResponseDTO> getOutageById(@PathVariable Long id) {
         Outage outage = outageService.getOutageById(id).orElseThrow(() -> new ResourceNotFoundException("Outage not found"));
 
-        return ResponseEntity.ok(OutageMapper.toResponseDTO(outage));
+        return ResponseEntity.ok(outageMapper.toResponseDTO(outage));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<OutageResponseDTO> updateOutage(@PathVariable Long id, @Valid @RequestBody OutageRequestDTO dto) {
         return ResponseEntity.ok(outageService.updateOutage(id, dto));
+    }
+
+    @PutMapping("/{id}/resolve")
+    public ResponseEntity<OutageResponseDTO> resolveOutage(@PathVariable Long id, @RequestParam Long adminId) {
+
+        Outage outage = outageService.resolveOutage(id, adminId);
+        return ResponseEntity.ok(outageMapper.toResponseDTO(outage));
     }
 
     @DeleteMapping("/{id}")

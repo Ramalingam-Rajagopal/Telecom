@@ -2,21 +2,28 @@ package telecom_api.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import telecom_api.dto.OutageRequestDTO;
 import telecom_api.dto.OutageResponseDTO;
 import telecom_api.entity.Outage;
+import telecom_api.enums.OutageStatus;
 import telecom_api.exception.ResourceNotFoundException;
 import telecom_api.repository.OutageRepository;
 import telecom_api.mapper.OutageMapper;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import telecom_api.entity.User;
+import telecom_api.repository.UserRepository;
+import telecom_api.enums.Role;
 
 @Service
 @RequiredArgsConstructor
 public class OutageService {
 
     private final OutageRepository outageRepository;
+    private final UserRepository userRepository;
+    private final OutageMapper outageMapper;
 
     public Outage saveOutage(Outage outage) {
         return outageRepository.save(outage);
@@ -47,6 +54,23 @@ public class OutageService {
 
         Outage updatedOutage = outageRepository.save(existingOutage);
 
-        return OutageMapper.toResponseDTO(updatedOutage);
+        return outageMapper.toResponseDTO(updatedOutage);
+    }
+
+    public Outage resolveOutage(Long outageId, Long adminId) {
+        Outage outage = outageRepository.findById(outageId)
+            .orElseThrow(() -> new ResourceNotFoundException("Outage not found"));
+
+        User admin = userRepository.findById(adminId)
+            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        if (admin.getRole() != Role.ADMIN) {
+            throw new RuntimeException("Only admin can resolve outage");
+    }
+
+        outage.setStatus(OutageStatus.RESOLVED);
+        outage.setResolvedBy(admin);
+        outage.setResolvedAt(LocalDateTime.now());
+        return outageRepository.save(outage);
     }
 }
