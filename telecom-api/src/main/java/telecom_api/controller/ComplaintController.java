@@ -10,7 +10,6 @@ import telecom_api.mapper.ComplaintMapper;
 import telecom_api.repository.UserRepository;
 import telecom_api.service.ComplaintService;
 import jakarta.validation.Valid;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import telecom_api.exception.ResourceNotFoundException;
@@ -30,7 +29,7 @@ public class ComplaintController {
 
         User user = userRepository.findById(dto.getUserId()).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        Complaint complaint = Complaint.builder().title(dto.getTitle()).description(dto.getDescription()).status(dto.getStatus()).severity(dto.getSeverity()).createdAt(LocalDateTime.now()).user(user).build();
+        Complaint complaint = Complaint.builder().title(dto.getTitle()).description(dto.getDescription()).status(dto.getStatus()).severity(dto.getSeverity()).user(user).build();
 
         Complaint savedComplaint = complaintService.saveComplaint(complaint);
 

@@ -1,6 +1,6 @@
 package telecom_api.enums;
 
 public enum Role {
-    CUSTOMER,
+    USER,
     ADMIN
 }

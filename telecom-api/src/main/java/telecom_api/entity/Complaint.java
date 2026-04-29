@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import telecom_api.enums.ComplaintStatus;
 import telecom_api.enums.SeverityLevel;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -32,9 +31,21 @@ public class Complaint {
     @Enumerated(EnumType.STRING)
     private SeverityLevel severity;
 
-    private LocalDateTime createdAt;
-
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
 }

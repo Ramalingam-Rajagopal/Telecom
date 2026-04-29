@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import telecom_api.enums.OutageStatus;
 import telecom_api.enums.SeverityLevel;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -33,4 +32,10 @@ public class Outage {
     private OutageStatus status;
 
     private LocalDateTime reportedAt;
+    private LocalDateTime resolvedAt;
+
+    @PrePersist
+    public void prePersist(){
+        this.reportedAt = LocalDateTime.now();
+    }
 }
