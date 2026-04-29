@@ -37,5 +37,18 @@ public class Outage {
     @PrePersist
     public void prePersist(){
         this.reportedAt = LocalDateTime.now();
+
+    
     }
+    @ManyToOne
+    @JoinColumn(name = "reported_by")
+    private User reportedBy;
+
+    @ManyToOne
+    @JoinColumn(name = "resolved_by")
+    private User resolvedBy;
+
+    @ManyToOne
+    @JoinColumn(name = "last_updated_by")
+    private User lastUpdatedBy;
 }

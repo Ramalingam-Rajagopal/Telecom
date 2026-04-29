@@ -17,4 +17,7 @@ public class OutageResponseDTO {
     private SeverityLevel severity;
     private OutageStatus status;
     private LocalDateTime reportedAt;
+    private LocalDateTime resolvedAt;
+    private Long reportedById;
+    private Long resolvedById;
 }
