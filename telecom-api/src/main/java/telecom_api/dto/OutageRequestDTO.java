@@ -3,7 +3,6 @@ package telecom_api.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import telecom_api.enums.OutageStatus;
 import telecom_api.enums.SeverityLevel;
 
 @Data
@@ -18,6 +17,6 @@ public class OutageRequestDTO {
     @NotNull(message = "Severity is required")
     private SeverityLevel severity;
 
-    @NotNull(message = "Status is required")
-    private OutageStatus status;
+    @NotNull(message = "Id is required")
+    private Long userId;
 }
