@@ -6,6 +6,7 @@ import telecom_api.dto.ComplaintRequestDTO;
 import telecom_api.dto.ComplaintResponseDTO;
 import telecom_api.entity.Complaint;
 import telecom_api.entity.User;
+import telecom_api.enums.ComplaintStatus;
 import telecom_api.mapper.ComplaintMapper;
 import telecom_api.repository.UserRepository;
 import telecom_api.service.ComplaintService;
@@ -53,6 +54,17 @@ public class ComplaintController {
     @PutMapping("/{id}")
     public ResponseEntity<ComplaintResponseDTO> updateComplaint(@PathVariable Long id, @Valid @RequestBody ComplaintRequestDTO dto) {
         return ResponseEntity.ok(complaintService.updateComplaint(id, dto));
+    }
+
+    @PutMapping("/{id}/status")
+    public ResponseEntity<ComplaintResponseDTO> updateStatus(
+        @PathVariable Long id,
+        @RequestParam Long adminId,
+        @RequestParam ComplaintStatus status) {
+
+    Complaint complaint = complaintService.updateStatus(id, adminId, status);
+
+    return ResponseEntity.ok(ComplaintMapper.toResponseDTO(complaint));
     }
 
     @DeleteMapping("/{id}")
