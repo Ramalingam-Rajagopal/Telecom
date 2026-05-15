@@ -18,4 +18,7 @@ public class ComplaintResponseDTO {
     private SeverityLevel severity;
     private LocalDateTime createdAt;
     private Long userId;
+    private LocalDateTime resolvedAt;
+    private Long resolvedById;
+    private Long lastUpdatedById;
 }

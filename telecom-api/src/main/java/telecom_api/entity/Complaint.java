@@ -48,4 +48,14 @@ public class Complaint {
     public void preUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
+
+    private LocalDateTime resolvedAt;
+
+    @ManyToOne
+    @JoinColumn(name = "resolved_by")
+    private User resolvedBy;
+
+    @ManyToOne
+    @JoinColumn(name = "last_updated_by")
+    private User lastUpdatedBy;
 }

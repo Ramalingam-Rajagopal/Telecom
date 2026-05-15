@@ -14,6 +14,10 @@ public class ComplaintMapper {
                 .severity(complaint.getSeverity())
                 .createdAt(complaint.getCreatedAt())
                 .userId(complaint.getUser().getId())
+                .resolvedAt(complaint.getResolvedAt())
+                .resolvedById(complaint.getResolvedBy() != null ? complaint.getResolvedBy().getId() : null)
+                .lastUpdatedById(complaint.getLastUpdatedBy() != null ? complaint.getLastUpdatedBy().getId() : null)
                 .build();
+                
     }
 }
