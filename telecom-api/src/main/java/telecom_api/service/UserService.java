@@ -1,6 +1,8 @@
 package telecom_api.service;
 
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import telecom_api.mapper.UserMapper;
 import telecom_api.dto.UserRequestDTO;
@@ -17,8 +19,10 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public User saveUser(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
@@ -53,4 +57,5 @@ public class UserService {
 
         return UserMapper.toResponseDTO(updatedUser);
     }
+    
 }
