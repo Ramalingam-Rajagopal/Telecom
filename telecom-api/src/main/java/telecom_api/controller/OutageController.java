@@ -54,10 +54,9 @@ public class OutageController {
     @PutMapping("/{id}/status")
     public ResponseEntity<OutageResponseDTO> updateStatus(
         @PathVariable Long id,
-        @RequestParam Long adminId,
         @RequestParam OutageStatus status) {
 
-        Outage outage = outageService.updateStatus(id, adminId, status);
+        Outage outage = outageService.updateStatus(id, status);
 
         return ResponseEntity.ok(outageMapper.toResponseDTO(outage));
     }

@@ -17,6 +17,4 @@ public class OutageRequestDTO {
     @NotNull(message = "Severity is required")
     private SeverityLevel severity;
 
-    @NotNull(message = "Id is required")
-    private Long userId;
 }

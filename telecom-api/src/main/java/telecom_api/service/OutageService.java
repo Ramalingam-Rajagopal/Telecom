@@ -1,6 +1,8 @@
 package telecom_api.service;
 
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import telecom_api.dto.OutageRequestDTO;
 import telecom_api.dto.OutageResponseDTO;
@@ -10,7 +12,7 @@ import telecom_api.enums.OutageStatus;
 import telecom_api.exception.ResourceNotFoundException;
 import telecom_api.repository.OutageRepository;
 import telecom_api.mapper.OutageMapper;
-
+import org.springframework.security.core.Authentication;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -27,8 +29,12 @@ public class OutageService {
     private final OutageMapper outageMapper;
 
     public Outage createOutage(OutageRequestDTO dto) {
-        User user = userRepository.findById(dto.getUserId())
-            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        String email = authentication.getName();
+
+        User user = userRepository.findByEmail(email).orElseThrow(() ->
+                new ResourceNotFoundException("User not found"));
 
     // 2. Build outage
         Outage outage = Outage.builder()
@@ -72,8 +78,12 @@ public class OutageService {
             existingOutage.setSeverity(dto.getSeverity());
         }
 
-        User user = userRepository.findById(dto.getUserId())
-            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        String email = authentication.getName();
+
+        User user = userRepository.findByEmail(email).orElseThrow(() ->
+                new ResourceNotFoundException("User not found"));
 
         existingOutage.setLastUpdatedBy(user);
 
@@ -82,13 +92,17 @@ public class OutageService {
         return outageMapper.toResponseDTO(updatedOutage);
     }
 
-    public Outage updateStatus(Long outageId, Long adminId, OutageStatus status) {
+    public Outage updateStatus(Long outageId, OutageStatus status) {
 
         Outage outage = outageRepository.findById(outageId)
             .orElseThrow(() -> new ResourceNotFoundException("Outage not found"));
 
-        User admin = userRepository.findById(adminId)
-            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        String email = authentication.getName();
+
+        User admin = userRepository.findByEmail(email).orElseThrow(() ->
+                new ResourceNotFoundException("User not found"));
 
         if (admin.getRole() != Role.ADMIN) {
             throw new RuntimeException("Only admin can update status");
