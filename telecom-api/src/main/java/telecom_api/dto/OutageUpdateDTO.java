@@ -10,6 +10,4 @@ public class OutageUpdateDTO {
     private String area;
     private String description;
     private SeverityLevel severity;
-
-    private Long userId; // for lastUpdatedBy
 }
