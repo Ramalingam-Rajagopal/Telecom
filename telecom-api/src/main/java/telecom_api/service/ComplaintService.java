@@ -17,7 +17,8 @@ import java.util.List;
 import java.util.Optional;
 import telecom_api.entity.User;
 import telecom_api.repository.UserRepository;
-
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @Service
 @RequiredArgsConstructor
@@ -64,13 +65,18 @@ public class ComplaintService {
         return ComplaintMapper.toResponseDTO(updatedComplaint);
     }
 
-    public Complaint updateStatus(Long complaintId, Long adminId, ComplaintStatus status) {
+    public Complaint updateStatus(Long complaintId, ComplaintStatus status) {
 
-    Complaint complaint = complaintRepository.findById(complaintId)
+        Complaint complaint = complaintRepository.findById(complaintId)
             .orElseThrow(() -> new ResourceNotFoundException("Complaint not found"));
 
-        User admin = userRepository.findById(adminId)
-            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        String email = authentication.getName();
+
+        User admin = userRepository.findByEmail(email)
+        .orElseThrow(() ->
+                new ResourceNotFoundException("User not found"));
 
         if (admin.getRole() != Role.ADMIN) {
         throw new RuntimeException("Only admin can update complaint status");
