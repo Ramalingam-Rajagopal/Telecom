@@ -21,6 +21,4 @@ public class ComplaintRequestDTO {
     @NotNull(message = "Severity is required")
     private SeverityLevel severity;
 
-    @NotNull(message = "User ID is required")
-    private Long userId;
 }

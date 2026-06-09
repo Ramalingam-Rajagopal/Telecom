@@ -15,7 +15,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import telecom_api.exception.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 
 @RestController
 @RequestMapping("/complaints")
@@ -28,7 +30,11 @@ public class ComplaintController {
     @PostMapping
     public ResponseEntity<ComplaintResponseDTO> createComplaint(@Valid @RequestBody ComplaintRequestDTO dto) {
 
-        User user = userRepository.findById(dto.getUserId()).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        String email = authentication.getName();
+
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         Complaint complaint = Complaint.builder().title(dto.getTitle()).description(dto.getDescription()).status(dto.getStatus()).severity(dto.getSeverity()).user(user).build();
 
@@ -59,10 +65,9 @@ public class ComplaintController {
     @PutMapping("/{id}/status")
     public ResponseEntity<ComplaintResponseDTO> updateStatus(
         @PathVariable Long id,
-        @RequestParam Long adminId,
         @RequestParam ComplaintStatus status) {
 
-    Complaint complaint = complaintService.updateStatus(id, adminId, status);
+    Complaint complaint = complaintService.updateStatus(id, status);
 
     return ResponseEntity.ok(ComplaintMapper.toResponseDTO(complaint));
     }
