@@ -78,10 +78,6 @@ public class ComplaintService {
         .orElseThrow(() ->
                 new ResourceNotFoundException("User not found"));
 
-        if (admin.getRole() != Role.ADMIN) {
-        throw new RuntimeException("Only admin can update complaint status");
-        }
-
         if (complaint.getStatus() == ComplaintStatus.OPEN && status == ComplaintStatus.RESOLVED) {
 
             throw new RuntimeException("Must move to IN_PROGRESS before RESOLVED");
