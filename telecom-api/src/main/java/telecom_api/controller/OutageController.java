@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import telecom_api.exception.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 @RestController
 @RequestMapping("/outages")
@@ -24,6 +25,7 @@ public class OutageController {
     private final OutageService outageService;
     private final OutageMapper outageMapper;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<OutageResponseDTO> createOutage(@Valid @RequestBody OutageRequestDTO dto) {
 
@@ -46,11 +48,13 @@ public class OutageController {
         return ResponseEntity.ok(outageMapper.toResponseDTO(outage));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<OutageResponseDTO> updateOutage(@PathVariable Long id, @RequestBody OutageUpdateDTO dto) {
         return ResponseEntity.ok(outageService.updateOutage(id, dto));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}/status")
     public ResponseEntity<OutageResponseDTO> updateStatus(
         @PathVariable Long id,
