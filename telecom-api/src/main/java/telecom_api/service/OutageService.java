@@ -104,10 +104,6 @@ public class OutageService {
         User admin = userRepository.findByEmail(email).orElseThrow(() ->
                 new ResourceNotFoundException("User not found"));
 
-        if (admin.getRole() != Role.ADMIN) {
-            throw new RuntimeException("Only admin can update status");
-        }
-
         if (outage.getStatus() == OutageStatus.REPORTED && status == OutageStatus.RESOLVED) {
             throw new RuntimeException("Must move to IN_PROGRESS before RESOLVED");
         }
