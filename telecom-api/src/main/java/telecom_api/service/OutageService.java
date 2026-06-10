@@ -18,8 +18,6 @@ import java.util.List;
 import java.util.Optional;
 import telecom_api.entity.User;
 import telecom_api.repository.UserRepository;
-import telecom_api.enums.Role;
-
 @Service
 @RequiredArgsConstructor
 public class OutageService {
