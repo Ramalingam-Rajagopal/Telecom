@@ -7,7 +7,6 @@ import telecom_api.dto.ComplaintRequestDTO;
 import telecom_api.dto.ComplaintResponseDTO;
 import telecom_api.entity.Complaint;
 import telecom_api.enums.ComplaintStatus;
-import telecom_api.enums.Role;
 import telecom_api.exception.ResourceNotFoundException;
 import telecom_api.repository.ComplaintRepository;
 import telecom_api.mapper.ComplaintMapper;
